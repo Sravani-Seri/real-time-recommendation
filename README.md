@@ -1,5 +1,4 @@
-# real-time-recommendation
-**Technical writing sample - real time recommendation**
+# Technical writing sample - real time recommendation
 
 ---
 
@@ -27,9 +26,8 @@ User → Event Streaming → Feature Engineering → ML Model → API Layer → 
 
 ### 3.1 Event Streaming Layer
 
-User interactions (clicks, views, purchases) are streamed in real time using:
+User interactions (clicks, views, purchases) are streamed in real time using Kafka
 
-:contentReference[oaicite:0]{index=0}
 
 **Technical Explanation:**  
 Kafka distributes events across partitions, allowing multiple consumers to process data concurrently and enabling horizontal scalability.
@@ -49,9 +47,7 @@ Examples:
 - Purchase frequency  
 - Session duration  
 
-Feature management tools:
-
-:contentReference[oaicite:1]{index=1}
+Feature management tools: Feast (or similar feature stores).
 
 **Why this matters:**  
 Feature stores ensure consistency between training (offline) and inference (online) environments.
@@ -83,35 +79,43 @@ If a user recently clicked similar items and the item is generally popular, the 
 
 In production systems, this scoring is typically performed using ML frameworks such as:
 
-TensorFlow
+TensorFlow  
 PyTorch
 
 ---
 
 ### 3.4 Model Serving Layer
 
-Trained models are deployed using:
-
-TensorFlow Serving
+Trained models are deployed using TensorFlow Serving
 
 The model is exposed via a REST API.
 
 **Example: FastAPI Inference Endpoint**
 
+```python
 from fastapi import FastAPI
 
 app = FastAPI()
+
+def fetch_user_features(user_id: int):
+    # Stub: In production, fetch from feature store
+    return {"recent_click_rate": 0.8}
+
+def generate_top_n(user_features: dict):
+    # Stub: In production, run model inference and rank
+    return ["Item1", "Item2", "Item3"]
 
 @app.post("/recommend")
 def get_recommendations(user_id: int):
     # Fetch user features
     user_features = fetch_user_features(user_id)
-
+    
     # Generate ranked recommendations
     recommendations = generate_top_n(user_features)
-
+    
     return {"user_id": user_id, "recommendations": recommendations}
-    ```
+```
+    
 **Technical Explanation:**
 The API retrieves real-time user features, passes them to the model, and returns Top-N ranked items.
 
@@ -125,9 +129,7 @@ Low latency (<100ms response time).
 
 ### 3.5 Caching Layer
 
-To improve response time, frequently requested results are cached using:
-
-Redis
+To improve response time, frequently requested results are cached using Redis
 
 **Why caching is critical:**
 It reduces repeated model computations and supports millions of concurrent users.
@@ -152,23 +154,13 @@ It reduces repeated model computations and supports millions of concurrent users
 
 
 ### 5. Key Technical Concepts
-**Low Latency**
 
-System must respond within milliseconds for seamless UX.
-
-**Scalability**
-
-Distributed systems allow handling of high concurrent traffic.
-
-**Cold Start Problem**
-
-New users or items lack historical data, requiring fallback strategies.
-
-**Online vs Offline Training**
-
-Offline → Model trained on historical datasets
-
-Online → Continuous updates using streaming data
+| Concept                    | Description                                                                                               |
+| ---------------            | ----------------                                                                                          |
+| Low Latency                | System must respond within milliseconds for seamless user experience.                                     |
+| Scalability                | Distributed systems allow handling of high concurrent traffic.                                            |
+| Cold Start Problem         | New users or items lack historical data, requiring fallback strategies (e.g., popularity-based defaults). |
+|Online vs. Offline Training | Offline: Model trained on historical datasets. <br> Online: Continuous updates using streaming data.           |                                                        
 
 ---
 
@@ -185,7 +177,7 @@ Online → Continuous updates using streaming data
 * A/B Testing
 
 **Business Objective:**
-Increase engagement, conversions, and revenue.
+Increase engagement and revenue.
 
 ---
 
